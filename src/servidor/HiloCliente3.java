@@ -13,12 +13,12 @@ import org.json.simple.JSONObject;
 import gestion.GestionDatosApp2;
 import gestion.Posicion;
 
-public class HiloCliente2 extends Thread {
+public class HiloCliente3 extends Thread {
 
 	Socket scCliente;
 	GestionDatosApp2 gestion;
 
-	public HiloCliente2(Socket sc) {
+	public HiloCliente3(Socket sc) {
 		scCliente = sc;
 		gestion = new GestionDatosApp2();
 	}
@@ -26,31 +26,26 @@ public class HiloCliente2 extends Thread {
 	@Override
 	public void run() {
 		try {
-			BufferedReader bf = new BufferedReader(new InputStreamReader(scCliente.getInputStream()));
-			String nombre = bf.readLine();
-			System.out.println(nombre);
-
 			PrintStream salida = new PrintStream(scCliente.getOutputStream());
-			salida.println(enviar(nombre));
+			salida.println(enviar());
 			scCliente.close();
 		} catch (IOException ex) {
 			ex.getStackTrace();
 		}
 	}
 
-	private String enviar(String nombre) {
-		ArrayList<Posicion> pos = gestion.getDatos(nombre);
+	private String enviar() {
+		ArrayList<String> nombres = gestion.getNombres();
 		JSONArray jarray = new JSONArray();
-
-		for (int i = 0; i < pos.size(); i++) {
+		for(int i = 0; i < nombres.size(); i++) {
+			System.out.println(nombres.get(i));
+		}
+		for (int i = 0; i < nombres.size(); i++) {
 			JSONObject job = new JSONObject();
-			job.put("nombre", pos.get(i).getNombre());
-			job.put("longitud", pos.get(i).getLongitud());
-			job.put("latitud", pos.get(i).getLatitud());
+			job.put("nombre", nombres.get(i));
 			jarray.add(job);
 		}
 		String s = jarray.toJSONString();
-		System.out.println(s);
 		return s;
 	}
 }

@@ -1,8 +1,15 @@
 package servidor;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
+
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import gestion.GestionDatosApp1;
 import gestion.Posicion;
 
@@ -19,23 +26,28 @@ public class HiloCliente1 extends Thread {
 	@Override
 	public void run() {
 		try {
-			/*
-			 * //Leer JSON y cerrar socket. BufferedReader bf=new
-			 * BufferedReader(new
-			 * InputStreamReader(scCliente.getInputStream())); String
-			 * s=bf.readLine(); System.out.println(s);
-			 */
-
-			ObjectInputStream ois = new ObjectInputStream(scCliente.getInputStream());
-			Posicion p = (Posicion) ois.readObject();
-			System.out.println(p.toString());
+			
+			 //Leer JSON y cerrar socket. 
+			 BufferedReader bf=new BufferedReader(new InputStreamReader(scCliente.getInputStream())); 
+			 String s=bf.readLine(); 
+			 System.out.println(s);
+			 try{
+				 JSONParser jp=new JSONParser();
+				 JSONArray jarray=(JSONArray) jp.parse(s);
+				 JSONObject job=(JSONObject) jarray.get(0);
+				 Posicion p=new Posicion(((String)job.get("nombre")),Double.parseDouble(job.get("longitud")+""),Double.parseDouble(job.get("latitud")+""));
+				 gestion.guardarDatos(p);
+			 } catch (org.json.simple.parser.ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//ObjectInputStream ois = new ObjectInputStream(scCliente.getInputStream());
+			//Posicion p = (Posicion) ois.readObject();
+			//System.out.println(p.toString());
 			scCliente.close();
-			gestion.guardarDatos(p);
 
 		} catch (IOException ex) {
 			ex.getStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
 	}
 }

@@ -15,9 +15,30 @@ public class GestionDatosApp2 {
     private String user="root";
     private String password="root";
 
-	public ArrayList<Posicion> getDatos(String nombre) {
+	public ArrayList<String> getNombres(){
+		ArrayList<String> nombres=new ArrayList<>();
+		try {
+			// 1. establecer conexión con BD
+			Connection cn = DriverManager.getConnection("jdbc:mysql://"+ip+":"+port+"/"+nombredb, user, password);
+			// 2. Enviar instrucción SQL
+			Statement st = cn.createStatement();
+			String sql = "select * from datos";
+			// 3. Manipulacion resultados
+			ResultSet rs = st.executeQuery(sql);
+			while (rs.next()) {
+				nombres.add(rs.getString("nombre"));
+			}
+			// 4. Cierre conexión
+			cn.close();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return nombres;
+	}
+        
+    public ArrayList<Posicion> getDatos(String nombre) {
 
-		if (nombre.equals("todos")) {
+		if (nombre.equals("Todos")) {
 			return getTodos();
 		} else {
 			return getDatosNombre(getId(nombre), nombre);

@@ -29,8 +29,12 @@ public class Servidor {
 					new HiloCliente1(cliente).start();
 					break;
 				case "bbb":
-					System.out.println("Cliente tipo 2");
+					System.out.println("Cliente tipo 2 - Datos");
 					new HiloCliente2(cliente).start();
+					break;
+				case "ccc":
+					System.out.println("Cliente tipo 2 - Nombres");
+					new HiloCliente3(cliente).start();
 					break;
 				}
 			}
